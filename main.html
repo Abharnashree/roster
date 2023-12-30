@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Railway roster website</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Maitree|Montserrat|Calligraffitti|Playfair+Display|Sahitya|Source+Sans+Pro|Ubuntu"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      html {
+        background: url("images\WhatsApp Image 2023-12-09 at 11.33.48 AM.jpeg") no-repeat 50% 50% fixed;
+        background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        -webkit-background-size: cover;
+      }
+
+      body {
+        height: 350px;
+        margin: 0 auto;
+        font-family: "Sahitya", cursive, sans-serif;
+      }
+
+      #Activities {
+        height: 600px !important;
+      }
+
+      #home {
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+        display: block;
+      }
+
+      #Activities {
+        padding-top: 20px;
+        height: 100%;
+        width: 100%;
+        top: 800px; /* Adjust this value based on the height of #home and the desired gap */
+        left: 0px;
+      }
+
+      .navb {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 70px;
+        background-color: dimgray !important;
+        z-index: 100;
+        display: block;
+      }
+
+      nav ul {
+        padding-top: 20px;
+      }
+
+      nav li {
+        display: flex;
+      }
+
+      nav li a {
+        font-size: 20px;
+        font-weight: 700;
+        margin-right: 20px;
+        color: darkgrey;
+        background-color: dimgrey;
+        font-family: "Sahitya", cursive, sans-serif;
+        text-decoration: none; /* Remove underline from links */
+      }
+
+      nav li a:hover {
+        text-decoration: none; /* Remove underline even when hovered */
+      }
+
+      .text-style {
+        font-family: "Sahitya", cursive, sans-serif;
+        font-weight: 800;
+      }
+
+      .home-page {
+    padding-top: 150px;
+    font-family: "Sahitya", cursive, sans-serif;
+    font-weight: 800;
+    color: #ffffff; /* Set text color to white */
+    text-shadow: 2px 2px 4px rgb(242, 224, 224); /* Add a subtle text shadow */
+}.style-name {
+    font-size: 90px;
+    color: #ffffff; /* Set text color to white */
+    margin: 0; /* Remove default margin */
+}
+
+.style-description {
+    font-size: 35px;
+    padding-bottom: 25px;
+    color: #ffffff; /* Set text color to white */
+    margin: 0; /* Remove default margin */
+}
+      .style-name {
+        font-size: 90px;
+        color: #172038;
+      }
+
+      .style-description {
+        font-size: 35px;
+        padding-bottom: 25px;
+        color: #172038;
+      }
+
+      hr {
+        height: 3px !important;
+        background-color: darkgray;
+      }
+
+      .btn {
+        color: #fff;
+      }
+
+      .btn {
+        color: #fff !important;
+      }
+
+      .btnList {
+        padding-top: 30px;
+      }
+
+      .btn-facebook:hover {
+        background-color: #3b5998;
+      }
+
+      .btn-twitter:hover {
+        background-color: #00acee;
+      }
+
+      .btn-linkedin:hover {
+        background-color: #007bb6;
+      }
+
+      .btn-github:hover {
+        background-color: #444444;
+      }
+
+      .btn-freecodecamp:hover {
+        background-color: #006400;
+      }
+      .block {
+    border: 2px thin solid;
+    background-color: white; /* Semi-transparent black background */
+    padding: 20px;
+    border-radius: 10px; /* Add border-radius for rounded corners */
+}
+.Activities-item {
+        padding-bottom: 20px;
+        margin-right: auto;
+        margin-left: auto;
+        width: auto;
+      }
+
+      .Activities-item:hover {
+        transition: 0.5s;
+        opacity: 0.5;
+      }
+
+      /* Existing CSS */
+      .container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        grid-gap: 10px;
+        padding-left: 50px;
+      }
+
+      .container::before,
+      .container::after {
+        content: none !important; /* Override Bootstrap's ::before and ::after content */
+      }
+
+      .grid-item {
+        width: 100%; /* Each item occupies full width */
+      }
+
+      /* Adjust the height of each grid item (image) */
+      .grid-item img {
+        width: 340px;
+        height: 275px;
+        border-radius: 9px;
+
+        /* Add border and shadow directly to the image */
+        border: 8px solid #fff; /* Outer border color */
+        box-shadow: 0 0 10px #172038, 0 0 20px black inset; /* Outer and inner shadow */
+
+        margin-bottom: 70px;
+        margin-left: 70px;
+      }
+
+      /* Add this CSS */
+      .act h2 {
+        text-align: center;
+        margin-top: 0; /* Optional: To remove default margin */
+      }
+      .act {
+        margin: 50px;
+      }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body data-spy="scroll" data-target=".navbar" data-offset="50">
+    <nav>
+      <div class="navb" id="myNavbar">
+        <ul class="navb-lis">
+          <li class="pull-right"><a href="#">Contact</a></li>
+          <li class="pull-right"><a href="#">About</a></li>
+          <li class="pull-right"><a href="#Activities">Activities</a></li>
+          <li class="pull-right"><a href="#home">Home</a></li>
+        </ul>
+      </div>
+    </nav>
+    <!--Home Page-->
+
+    <div id="home">
+      <div class="home-page">
+        <div class="block text-center">
+          <h1 class="style-name">INDIAN RAILWAYS</h1>
+          <h3 class="style-description">Safety|Security|Punctuality</h3>
+      
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--End Of Home Page-->
+
+    <!--Portfolio Page-->
+
+    <div class="act">
+      <h2><strong>Activities</strong></h2>
+      <hr />
+    </div>
+    <div id="Activities">
+      <div class="container">
+        <div class="grid-item">
+          <a href="http://localhost:8000/search.html"
+            ><img 
+              src="images\WhatsApp Image 2023-12-09 at 11.33.46 AM.jpeg"
+              class="img-responsive"
+              alt="ANALYSIS.html"
+          /></a>
+        </div>
+        <div class="grid-item">
+          <a href="http://localhost:9700/add.html"
+            ><img
+              src="images\WhatsApp Image 2023-12-09 at 11.33.47 AM.jpeg"
+              class="img-responsive"
+              alt="EMP_MANAGE.html"
+          /></a>
+        </div>
+        <div class="grid-item">
+          <a href="http://localhost:9900/not.html"
+            ><img
+              src="images\WhatsApp Image 2023-12-09 at 11.33.47 AM (1).jpeg"
+              class="img-responsive"
+              alt="NOTIFICATION.html"
+          /></a>
+        </div>
+        <div class="grid-item">
+          <a href="http://localhost:5000/emp.html"
+            ><img
+              src="images\WhatsApp Image 2023-12-09 at 11.33.48 AM (1).jpeg"
+              class="img-responsive"
+              alt="ROSTER.html"
+          /></a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

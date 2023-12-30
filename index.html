@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  </head>
+  <body>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 20px;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      h2 {
+        color: #333;
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      #sortAttribute,
+      #sortOrder,
+      #searchAttribute,
+      #searchInput,
+      button {
+        margin: 10px 0;
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      button {
+        cursor: pointer;
+        background-color: #172031;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+
+      button:hover {
+        background-color: #006400;
+      }
+
+      #employeeTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      #employeeTable th,
+      #employeeTable td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      #employeeTable th {
+        background-color: #172031;
+        color: white;
+      }
+
+      #employeeTable tbody tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      #employeeTable tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    </style>
+
+    <script>
+      function displayEmployees(data) {
+        const tableBody = document.querySelector("#employeeTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach((employee) => {
+          const row = tableBody.insertRow();
+          const cell1 = row.insertCell(0);
+          const cell2 = row.insertCell(1);
+          const cell3 = row.insertCell(2);
+          const cell4 = row.insertCell(3);
+          const cell5 = row.insertCell(4);
+
+          cell1.textContent = employee.name;
+          cell2.textContent = employee.position;
+          cell3.textContent = employee.dept;
+          cell4.textContent = employee.mail;
+          cell5.textContent = employee.contact_num;
+        });
+      }
+
+      function searchAndSortEmployees() {
+        const sortAttribute = document.getElementById("sortAttribute").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+        const searchAttribute =
+          document.getElementById("searchAttribute").value;
+        const searchInput = document.getElementById("searchInput").value;
+
+        $.ajax({
+          url: `/employee/sort/${sortAttribute}?order=${sortOrder}`,
+          method: "GET",
+          success: function (data) {
+            const filteredData = data.filter((employee) =>
+              employee[searchAttribute]
+                .toLowerCase()
+                .includes(searchInput.toLowerCase())
+            );
+            displayEmployees(filteredData);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error(`Error fetching and sorting employee data:`, jqXHR);
+          },
+        });
+      }
+
+      // Fetch initial employee data when the page loads
+      $(document).ready(function () {
+        // Make an AJAX request to the server for initial employee data
+        $.ajax({
+          url: "/employee",
+          method: "GET",
+          success: function (data) {
+            displayEmployees(data);
+          },
+          error: function (error) {
+            console.error("Error fetching initial employee data:", error);
+          },
+        });
+      });
+    </script>
+
+    <h2>Employee Search</h2>
+
+    <label for="sortAttribute">Sort By:</label>
+    <select id="sortAttribute">
+      <option
+        value="
+      name"
+      >
+        Name
+      </option>
+      <option value="position">Position</option>
+      <option value="dept">Department</option>
+      <!-- Add these options to the searchAttribute and sortAttribute selects in your HTML -->
+      <option value="contact_num">Contact Number</option>
+      <option value="mail">Email</option>
+
+      <!-- Add more options based on your attributes -->
+    </select>
+
+    <label for="sortOrder">Sort Order:</label>
+    <select id="sortOrder">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+
+    <label for="searchAttribute">Search By:</label>
+    <select id="searchAttribute">
+      <option value="name">Name</option>
+      <option value="position">Position</option>
+      <option value="dept">Department</option>
+      <!-- Add more options based on your attributes -->
+    </select>
+
+    <input type="text" id="searchInput" placeholder="Search..." />
+
+    <button onclick="searchAndSortEmployees()">Search and Sort</button>
+
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Contact Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Employee data will be displayed here -->
+      </tbody>
+    </table>
+  </body>
+</html>

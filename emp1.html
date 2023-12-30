@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Schedule</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+        background-color: #fff;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .grid-button {
+        border: 1px solid #ccc;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+      }
+
+      .dropdown {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        width: 100%;
+        text-align: left;
+        border-radius: 6px;
+      }
+
+      .dropdown-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .dropdown-option {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .dropdown-option:hover {
+        background-color: #f2f2f2;
+      }
+
+      #names,
+      #tableContainer {
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+    </style>
+    <script>
+      const selectedValues = {};
+      const shiftsPerDay = 3; // Number of shifts per day
+      const maxShiftsPerEmployee = 6; // Maximum shifts per employee
+
+      async function showDropdown(event, day, timeOfDay) {
+        event.stopPropagation();
+        const dropdown = document.getElementById("dropdown");
+        const timeDropdown = document.getElementById("timeDropdown");
+
+        dropdown.style.display = "block";
+        dropdown.style.left = `${event.currentTarget.offsetLeft}px`;
+        dropdown.style.top = `${
+          event.currentTarget.offsetTop + event.currentTarget.offsetHeight
+        }px`;
+
+        try {
+          const response = await fetch("http://localhost:5000/employee");
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const allEmployees = await response.json();
+
+          // Filter employees who haven't reached the maximum shifts
+          const availableEmployees = allEmployees.filter((name) => {
+            const selectedCount = Object.values(selectedValues)
+              .flat()
+              .filter((value) => value === name).length;
+            return selectedCount < maxShiftsPerEmployee;
+          });
+
+          timeDropdown.innerHTML = availableEmployees
+            .map(
+              (name) => `
+                <div class="dropdown-option" onclick="showNames('${day}', '${timeOfDay}', '${name}')">${name}</div>
+            `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error fetching or parsing data:", error);
+          timeDropdown.innerHTML = "<p>Error fetching data</p>";
+        }
+      }
+
+      function showNames(day, timeOfDay, name) {
+        const namesContainer = document.getElementById("names");
+        const dropdown = document.getElementById("dropdown");
+
+        // Check if the employee is already selected for the maximum shifts
+        const selectedCount = Object.values(selectedValues)
+          .flat()
+          .filter((value) => value === name).length;
+        if (selectedCount >= 6) {
+          alert(`Employee ${name} has reached the maximum shifts.`);
+          return;
+        }
+
+        // Check if the employee is selected for more than one shift on the same day
+        const existingShifts = Object.keys(selectedValues).filter((key) =>
+          key.startsWith(`${day}_`)
+        );
+        const conflictingShift = existingShifts.find((shift) =>
+          selectedValues[shift].includes(name)
+        );
+        if (conflictingShift) {
+          alert(
+            `Employee ${name} is already selected for a shift on ${conflictingShift.replace(
+              "_",
+              " "
+            )}.`
+          );
+          return;
+        }
+
+        // Check if more than 3 employees are selected for the shift
+        const selectedShift = selectedValues[`${day}_${timeOfDay}`] || [];
+        if (selectedShift.length >= 3) {
+          alert(`More than 3 employees are selected for ${day} ${timeOfDay}.`);
+          return;
+        }
+
+        // Update the selected values
+        selectedValues[`${day}_${timeOfDay}`] = [...selectedShift, name];
+
+        // Display the selected names in the namesContainer
+        const newRow = document.createElement("div");
+
+        // Hide the dropdown
+        dropdown.style.display = "none";
+
+        // Update the table
+        displaySelectedValues();
+      }
+
+      function displaySelectedValues() {
+        const tableContainer = document.getElementById("tableContainer");
+        tableContainer.innerHTML = "";
+
+        // Iterate through each day and create a table
+        for (const day of [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ]) {
+          const date = "Dec 25"; // You can replace this with the actual date
+          createTable(day, date);
+        }
+
+        const selectedShifts = new Set();
+
+        for (const key in selectedValues) {
+          const [day, timeOfDay] = key.split("_");
+          const selectedNames = selectedValues[key];
+
+          // Check if the shift has already been selected
+          const shiftIdentifier = `${day}_${timeOfDay}`;
+          if (selectedShifts.has(shiftIdentifier)) {
+            continue; // Skip duplicate shifts
+          }
+
+          // Check if there are more than three selected names for the shift
+          if (selectedNames.length > 3) {
+            continue; // Skip shifts with more than three selected names
+          }
+
+          // Check if any employee has more than one shift on the same day
+          const shiftsForDay = Array.from(selectedShifts).filter((shift) =>
+            shift.startsWith(`${day}_`)
+          );
+          if (shiftsForDay.some((shift) => selectedValues[shift].length > 0)) {
+            continue; // Skip shifts with an employee working more than one shift on the same day
+          }
+
+          // Display each selected name on a new row
+          selectedNames.forEach((selectedName) => {
+            const row = document.createElement("tr");
+            const cell1 = document.createElement("td");
+            cell1.appendChild(document.createTextNode(day));
+            row.appendChild(cell1);
+
+            const cell2 = document.createElement("td");
+            cell2.appendChild(document.createTextNode(timeOfDay));
+            row.appendChild(cell2);
+
+            const cell3 = document.createElement("td");
+            cell3.appendChild(document.createTextNode(selectedName));
+            row.appendChild(cell3);
+
+            tbody.appendChild(row);
+          });
+
+          // Mark the shift as selected
+          selectedShifts.add(shiftIdentifier);
+        }
+      }
+
+      function submitSelection() {
+        const schedule = Object.entries(selectedValues).map(
+          ([key, selectedName]) => {
+            const [day, timeOfDay] = key.split("_");
+            return { day, timeOfDay, selectedName };
+          }
+        );
+
+        fetch("/submitSchedule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ schedule }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((message) => {
+            console.log(message);
+          })
+          .catch((error) => {
+            console.error("Error submitting schedule:", error);
+          });
+      }
+
+      window.onclick = function () {
+        const dropdown = document.getElementById("dropdown");
+        dropdown.style.display = "none";
+      };
+
+      // Function to create a table for a given day
+      function createTable(day, date) {
+        const tableContainer = document.getElementById("tableContainer");
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const headers = ["Shift", "Selected Name"];
+
+        headers.forEach((headerText) => {
+          const th = document.createElement("th");
+          th.appendChild(document.createTextNode(headerText));
+          headerRow.appendChild(th);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+
+        for (const timeOfDay of ["Morning", "Evening", "Night"]) {
+          const row = document.createElement("tr");
+          const cell1 = document.createElement("td");
+          cell1.appendChild(document.createTextNode(timeOfDay));
+          row.appendChild(cell1);
+
+          const cell2 = document.createElement("td");
+          const button = document.createElement("button");
+          button.className = "grid-button";
+          button.textContent = "Select";
+          button.onclick = function (event) {
+            showDropdown(event, day, timeOfDay);
+          };
+          cell2.appendChild(button);
+          row.appendChild(cell2);
+
+          tbody.appendChild(row);
+        }
+
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+
+        // Display the date and day above the table
+        const dayInfo = document.createElement("div");
+        dayInfo.innerHTML = `<h2>${day}<br/><small>${date}</small></h2>`;
+        tableContainer.appendChild(dayInfo);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Weekly Schedule</h1>
+    <div class="grid-container">
+      <!-- Tables will be dynamically added here -->
+    </div>
+
+    <div id="dropdown" class="dropdown" onclick="event.stopPropagation();">
+      <div class="dropdown-content" id="timeDropdown">
+        <!-- Dropdown options will be dynamically added here -->
+      </div>
+    </div>
+
+    <div id="names"></div>
+
+    <div id="tableContainer"></div>
+
+    <button onclick="submitSelection()">Submit</button>
+  </body>
+</html>

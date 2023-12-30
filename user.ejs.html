@@ -1,0 +1,29 @@
+<!-- views/user.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- ... (head content) ... -->
+  </head>
+  <body>
+    <h1>User Schedule</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Time of Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% schedule.forEach(entry => { %>
+        <tr>
+          <td><%= entry.day %></td>
+          <td><%= entry.time_of_day %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <a href="/logout">Logout</a>
+  </body>
+</html>

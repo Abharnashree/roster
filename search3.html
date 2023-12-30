@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+      /* Add your existing styles here */
+    </style>
+  </head>
+  <body>
+    <h2>Employee Search</h2>
+
+    <div id="recordCount"></div>
+
+    <label for="sortAttribute">Sort By:</label>
+    <select id="sortAttribute">
+      <option value="name">Name</option>
+      <option value="position">Position</option>
+      <option value="dept">Department</option>
+      <option value="contact_num">Contact Number</option>
+      <option value="mail">Email</option>
+    </select>
+
+    <label for="sortOrder">Sort Order:</label>
+    <select id="sortOrder">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+
+    <label for="searchAttribute">Search By:</label>
+    <select id="searchAttribute">
+      <option value="name">Name</option>
+      <option value="position">Position</option>
+      <option value="dept">Department</option>
+    </select>
+
+    <input type="text" id="searchInput" placeholder="Search..." />
+
+    <button onclick="searchAndSortEmployees()">Search and Sort</button>
+
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Contact Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Employee data will be displayed here -->
+      </tbody>
+    </table>
+
+    <button onclick="saveChanges()">Save Changes</button>
+
+    <script>
+      let editedEmployee = null;
+
+      function makeEditable(element) {
+        const oldValue = element.textContent;
+        element.classList.add("edit-mode");
+        const input = document.createElement("input");
+        input.value = oldValue;
+        input.addEventListener("blur", function () {
+          element.textContent = input.value;
+          element.classList.remove("edit-mode");
+          saveChanges(element);
+        });
+        element.innerHTML = "";
+        element.appendChild(input);
+        input.focus();
+      }
+
+      function saveChanges(cell) {
+        if (!editedEmployee) {
+          console.error("No changes to save.");
+          return;
+        }
+
+        const employeeId = cell.parentElement.getAttribute("data-id");
+        editedEmployee.id = employeeId;
+
+        $.ajax({
+          url: `/employee/${encodeURIComponent(editedEmployee.id)}`,
+          method: "PUT",
+          data: editedEmployee,
+          success: function (response) {
+            console.log(response.message);
+            editedEmployee = null;
+            searchAndSortEmployees();
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error(`Error updating employee data:`, jqXHR);
+          },
+        });
+      }
+
+      function makeCellEditable(event) {
+        const cell = event.target;
+        makeEditable(cell);
+        editedEmployee = {
+          id: cell.parentElement.getAttribute("data-id"),
+          name: cell.parentElement.cells[0].textContent,
+          position: cell.parentElement.cells[1].textContent,
+          dept: cell.parentElement.cells[2].textContent,
+          mail: cell.parentElement.cells[3].textContent,
+          contact_num: cell.parentElement.cells[4].textContent,
+        };
+      }
+
+      function displayEmployees(data, totalCount) {
+        const tableBody = document.querySelector("#employeeTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach((employee) => {
+          const row = tableBody.insertRow();
+          row.setAttribute("data-id", employee.id);
+
+          const cell1 = row.insertCell(0);
+          const cell2 = row.insertCell(1);
+          const cell3 = row.insertCell(2);
+          const cell4 = row.insertCell(3);
+          const cell5 = row.insertCell(4);
+
+          cell1.className = "editable";
+          cell2.className = "editable";
+          cell3.className = "editable";
+          cell4.className = "editable";
+          cell5.className = "editable";
+
+          cell1.textContent = employee.name;
+          cell2.textContent = employee.position;
+          cell3.textContent = employee.dept;
+          cell4.textContent = employee.mail;
+          cell5.textContent = employee.contact_num;
+
+          cell1.setAttribute("data-attribute", "name");
+          cell2.setAttribute("data-attribute", "position");
+          cell3.setAttribute("data-attribute", "dept");
+          cell4.setAttribute("data-attribute", "mail");
+          cell5.setAttribute("data-attribute", "contact_num");
+
+          cell1.addEventListener("click", (event) => makeCellEditable(event));
+          cell2.addEventListener("click", (event) => makeCellEditable(event));
+          cell3.addEventListener("click", (event) => makeCellEditable(event));
+          cell4.addEventListener("click", (event) => makeCellEditable(event));
+          cell5.addEventListener("click", (event) => makeCellEditable(event));
+        });
+      }
+
+      function searchAndSortEmployees() {
+        const sortAttribute = document.getElementById("sortAttribute").value;
+        const sortOrder = document.getElementById("sortOrder").value;
+        const searchAttribute =
+          document.getElementById("searchAttribute").value;
+        const searchInput = document.getElementById("searchInput").value;
+
+        $.ajax({
+          url: `/employee/sort/${sortAttribute}?order=${sortOrder}`,
+          method: "GET",
+          success: function (response) {
+            const { data, totalCount } = response;
+            const filteredData = data.filter((employee) =>
+              employee[searchAttribute]
+                .toLowerCase()
+                .includes(searchInput.toLowerCase())
+            );
+            displayEmployees(filteredData, totalCount);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error(`Error fetching and sorting employee data:`, jqXHR);
+          },
+        });
+      }
+
+      $(document).ready(function () {
+        $.ajax({
+          url: "/employee",
+          method: "GET",
+          success: function (response) {
+            const { data, totalCount } = response;
+            displayEmployees(data, totalCount);
+          },
+          error: function (error) {
+            console.error("Error fetching initial employee data:", error);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

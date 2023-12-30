@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>User Schedule</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>User Schedule</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Day</th>
+          <th>Time of Day</th>
+          <th>Selected Name</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+
+    <script>
+      // Fetch schedule data asynchronously
+      fetch("/schedule") // Update the port if necessary
+        .then((response) => response.json())
+        .then((schedule) => {
+          var scheduleBody = document.getElementById("scheduleBody");
+          schedule.forEach((entry) => {
+            var row = document.createElement("tr");
+            row.innerHTML =
+              "<td>" +
+              entry.id +
+              "</td><td>" +
+              entry.day +
+              "</td><td>" +
+              entry.time_of_day +
+              "</td><td>" +
+              entry.selected_name +
+              "</td><td>";
+            scheduleBody.appendChild(row);
+          });
+        })
+        .catch((error) =>
+          console.error("Error fetching schedule data:", error)
+        );
+    </script>
+    <a href="http://localhost:3000/swap.html">
+      <button
+        style="
+          background-color: rgb(33, 128, 96);
+          margin-left: 500px;
+          margin-top: 20px;
+          margin-bottom: 30px;
+        "
+      >
+        Request Shift swap
+      </button>
+    </a>
+  </body>
+</html>

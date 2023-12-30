@@ -1,0 +1,113 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 300px;
+        text-align: center;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 5px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+      }
+    </style>
+    <title>Shift Swap Request</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Shift Swap Request</h1>
+
+      <label for="empId">Employee ID:</label>
+      <input type="number" id="empId" placeholder="Enter Employee ID" />
+
+      <label for="originalShiftId">Original Shift ID:</label>
+      <input
+        type="number"
+        id="originalShiftId"
+        placeholder="Enter Original Shift ID"
+      />
+
+      <label for="requestedShiftId">Requested Shift ID:</label>
+      <input
+        type="number"
+        id="requestedShiftId"
+        placeholder="Enter Requested Shift ID"
+      />
+
+      <label for="reason">Reason:</label>
+      <textarea id="reason" placeholder="Enter Reason"></textarea>
+
+      <button onclick="requestShiftSwap()">Request Shift Swap</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function requestShiftSwap() {
+        const empId = document.getElementById("empId").value;
+        const originalShiftId =
+          document.getElementById("originalShiftId").value;
+        const requestedShiftId =
+          document.getElementById("requestedShiftId").value;
+        const reason = document.getElementById("reason").value;
+
+        // Make a POST request to the backend API endpoint
+        axios
+          .post("http://localhost:3000/request-shift-swap", {
+            empId: parseInt(empId),
+            originalShiftId: parseInt(originalShiftId),
+            requestedShiftId: parseInt(requestedShiftId),
+            reason,
+          })
+          .then((response) => {
+            if (response.data.success) {
+              alert("Shift swap request submitted successfully!");
+              if (response.data.status === "Approved") {
+                // If shift swap is approved, show success alert
+                alert("Shift swap approved successfully!");
+              } else {
+                // If shift swap is pending, show button to send request to supervisor
+                if (
+                  confirm(
+                    "Shift swap is pending. Do you want to send a request to the supervisor?"
+                  )
+                ) {
+                  window.location.href = "supervisor-request.html"; // Redirect to supervisor request page
+                }
+              }
+            } else {
+              alert("Failed to submit shift swap request. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error(
+              "Error submitting shift swap request:",
+              error.message
+            );
+          });
+      }
+    </script>
+  </body>
+</html>

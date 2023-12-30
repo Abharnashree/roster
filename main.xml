@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Railway roster website</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Maitree|Montserrat|Calligraffitti|Playfair+Display|Sahitya|Source+Sans+Pro|Ubuntu" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/MAIN.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+    <navbar>
+        <navbar-items>
+            <item align="right"><link href="#">Contact</link></item>
+            <item align="right"><link href="#">About</link></item>
+            <item align="right"><link href="#Activities">Activities</link></item>
+            <item align="right"><link href="#home">Home</link></item>
+        </navbar-items>
+    </navbar>
+    <!-- Home Page -->
+    <home>
+        <home-page>
+            <block class="text-center">
+                <heading1 class="style-name">INDIAN RAILWAYS</heading1>
+                <heading3 class="style-description">Safety|Security|Punctuality</heading3>
+                <button-list class="text-center">
+                    <button-facebook href="" target="_blank"><icon-facebook></icon-facebook>xxx</button-facebook>
+                    <button-twitter href="" target="_blank"><icon-twitter></icon-twitter>yyy</button-twitter>
+                    <button-linkedin href="" target="_blank"><icon-linkedin></icon-linkedin>zzz</button-linkedin>
+                    <button-github href="" target="_blank"><icon-github></icon-github>AAA</button-github>
+                    <button-freecodecamp href="" target="_blank"><icon-freecodecamp></icon-freecodecamp>bbb</button-freecodecamp>
+                </button-list>
+            </block>
+        </home-page>
+    </home>
+    <!-- End Of Home Page -->
+    <!-- Portfolio Page -->
+    <activities>
+        <heading2>Activities</heading2>
+        <hr/>
+        <activity-items>
+            <activity>
+                <link href="ANALYSIS.html"><image src="images/analysis.png" alt="ANALYSIS.html"/></link>
+            </activity>
+            <activity>
+                <link href="emp_manage.html"><image src="images/emp_manage.png" alt="EMP_MANAGE.html"/></link>
+            </activity>
+            <activity>
+                <link href="notification.html"><image src="images/notifications.png" alt="NOTIFICATION.html"/></link>
+            </activity>
+            <activity>
+                <link href="roster.html"><image src="images/roster.png" alt="ROSTER.html"/></link>
+            </activity>
+        </activity-items>
+    </activities>
+</body>
+</html>
